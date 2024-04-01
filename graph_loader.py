@@ -264,9 +264,11 @@ class WeightedGraph(Graph):
         return sorted_lst
 
 
-if __name__ == '__main__':
-
-    data = pandas.read_csv('music_genre.csv')
+def load_graph(file: str) -> WeightedGraph:
+    """
+    later
+    """
+    data = pandas.read_csv(file)
     data.drop(data.columns[[3, 6, 9, 11, 12, 13, 14, 15]], axis=1, inplace=True)
     data.dropna(inplace=True)
     graph = WeightedGraph()
@@ -276,14 +278,20 @@ if __name__ == '__main__':
 
     # do we generate the edges after asking if the user wants all genres/only the same genre as the chosen song?
 
-    for s in data.iterrows():        # select a song
+    for s in data.iterrows():  # select a song
         data['difference'] = abs(data['acousticness'] - s[1]['acousticness'])  # create a difference column
-        for c in data.columns[4:9]:       # select the different categories
+        for c in data.columns[4:9]:  # select the different categories
             data['difference'] += abs(data[c] - s[1][c])  # adds the differences of all of them to the diff score
         sort_by_similar = data.sort_values('difference', ascending=True)  # sorts the differences in ascending order
-        for i in range(16):          # iterates 16 times
-            if s[1]['instance_id'] != sort_by_similar.iloc[i]['instance_id']:       # checks if it is the selected song
+        for i in range(16):  # iterates 16 times
+            if s[1]['instance_id'] != sort_by_similar.iloc[i]['instance_id']:  # checks if it is the selected song
                 graph.add_edge(s[1]['instance_id'],
                                sort_by_similar.iloc[i]['instance_id'],
                                sort_by_similar.iloc[i]['difference'])
                 # adds edge btwn select and song
+
+    return graph
+
+
+if __name__ == '__main__':
+    pass
