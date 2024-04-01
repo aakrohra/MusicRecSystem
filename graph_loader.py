@@ -229,6 +229,40 @@ class WeightedGraph(Graph):
         else:
             raise ValueError
 
+    def get_song_recommendations(self, song: float) -> list[float]:
+        """
+        Returns the instance ids of the songs most similar to the input song provided.
+        The returned list is given in order of most similar to least.
+
+        Raise ValueError if item does not correspond to a vertex in the graph.
+        """
+        if song not in self._vertices:
+            raise ValueError
+        input_vertex = self._vertices[song]
+        sorted_lst = [u.item for u in self._ascending_sort_dictionary(input_vertex.neighbours)]
+        return sorted_lst
+        # selection sorting neighbours (should be fine bc it's a small selection?)
+
+    def _ascending_sort_dictionary(self, d: dict) -> list:
+        """
+        Helper function for get_song_recommendations()
+        #TODO: PROPER DOCSTRING LATER
+        """
+        d_new = dict(d)
+        sorted_lst = []
+        item = Any
+
+        for _ in range(len(d_new)):
+            smallest = 99999
+            for key in d_new:
+                if d_new[key] < smallest:
+                    item = key
+                    smallest = d_new[key]
+            sorted_lst.append(item)
+            del d_new[item]
+
+        return sorted_lst
+
 
 if __name__ == '__main__':
 
