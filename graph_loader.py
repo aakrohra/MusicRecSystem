@@ -293,5 +293,30 @@ def load_graph(file: str) -> WeightedGraph:
     return graph
 
 
+def load_visualization_graph(bigger_graph: WeightedGraph, song: float, data: pandas.DataFrame) -> WeightedGraph:
+    """
+    Returns a graph containing a song and its 15 most similar vertices.
+    """
+    graph = WeightedGraph()
+    sim_songs = bigger_graph.get_song_recommendations(song)[:15]
+    id_to_names = {}
+
+    for s in data.iterrows():
+        if s[1]['instance_id'] == song or s[1]['instance_id'] in sim_songs:
+            id_to_names[s[1]['instance_id']] = (s[1]['artist_name'], s[1]['track_name'], s[1]['music_genre'])
+
+    graph.add_vertex((id_to_names[song][0], id_to_names[song][1]), id_to_names[song][2])
+    item1 = (id_to_names[song][0], id_to_names[song][1])
+    song_vertex = graph._vertices[item1]
+
+    for sim in sim_songs:
+        graph.add_vertex((id_to_names[sim][0], id_to_names[sim][1]), id_to_names[sim][2])
+        item2 = (id_to_names[sim][0], id_to_names[sim][1])
+        sim_vertex = graph._vertices[item2]
+        graph.add_edge(item1, item2, sim_vertex.neighbours[song_vertex])
+
+    return graph
+
+
 if __name__ == '__main__':
     pass
