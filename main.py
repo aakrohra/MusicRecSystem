@@ -19,20 +19,21 @@ def get_graph(graphs: dict[str, graph_loader.WeightedGraph], genre: str) -> grap
     if genre in graphs.keys():
         return graphs[genre]
     else:
-        return graph_loader.load_graph('music_genre.csv', genre)
+        return graph_loader.load_graph(data, genre)
 
 
 if __name__ == '__main__':
+    data = pandas.read_csv('music_genre.csv')
+    data.drop(data.columns[[3, 6, 9, 11, 12, 13, 14, 15]], axis=1, inplace=True)
+    data.dropna(inplace=True)
 
-    data = pandas.read_csv('music_genre.csv',
-                           usecols=['instance_id', 'artist_name', 'track_name', 'music_genre'])
-
-    input_song = 0.0
-    input_genre = ''
     graphs_used_so_far = {}
     valid = False
 
     while not valid:  # loop until a valid formatted input is given
+        input_song = 0.0
+        input_genre = ''
+
         print('What song would you like to generate recommendations for?')
         track = input('Please enter the track name: ').lower()
         artist = input('Please enter the artist name: ').lower()

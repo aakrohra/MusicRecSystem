@@ -241,16 +241,13 @@ class WeightedGraph(Graph):
         return sorted_lst
 
 
-def load_graph(file: str, genre: str) -> WeightedGraph:
+def load_graph(raw_data: pandas.DataFrame, genre: str) -> WeightedGraph:
     """Return a weighted song similarity graph corresponding to the given
     dataset containing only one genre of song.
 
     Preconditions:
         - file is the path to a CSV file corresponding to the song ratings data.
     """
-    raw_data = pandas.read_csv(file)         # data wrangling to get only the necessary information
-    raw_data.drop(raw_data.columns[[3, 6, 9, 11, 12, 13, 14, 15]], axis=1, inplace=True)
-    raw_data.dropna(inplace=True)
     data = raw_data[(raw_data.music_genre == genre)].copy()
     graph = WeightedGraph()
 
