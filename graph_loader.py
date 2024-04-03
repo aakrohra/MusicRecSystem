@@ -1,8 +1,12 @@
-"""*Insert description here*"""
+"""CSC111 Project 2 - Graph Loader
+
+Module Description: Creates a weighted graph using data from a CSV file.
+
+This file is Copyright (c) 2024 Aakaash Rohra, Daniel Xie, Ethan Chiu, and Jackie Chen.
+"""
 from __future__ import annotations
 from typing import Any, Union
 import pandas
-import python_ta
 
 
 class _Vertex:              #TODO: Maybe add a preconddition that you self.kind must be some set of genres
@@ -165,7 +169,7 @@ class WeightedGraph(Graph):
         if item not in self._vertices:
             self._vertices[item] = _WeightedVertex(item, kind)
 
-    def add_edge(self, item1: Any, item2: Any, weight: float) -> None:
+    def add_edge(self, item1: Any, item2: Any, weight: float = 0.0) -> None:
         """Add an edge between the two vertices with the given items in this graph,
         with the given weight.
 
@@ -276,8 +280,8 @@ def load_graph(file: str, genre: str) -> WeightedGraph:
 
 
 if __name__ == '__main__':
+    import python_ta
     python_ta.check_all(config={
-        'extra-imports': ['pandas'],  # the names (strs) of imported modules
-        'allowed-io': [],  # the names (strs) of functions that call print/open/input
+        'extra-imports': ['pandas'],
         'max-line-length': 120
     })
