@@ -11,7 +11,8 @@ import pdf_loader
 import graph_loader
 
 
-def get_graph(graphs: dict[str, graph_loader.WeightedGraph], genre: str) -> graph_loader.WeightedGraph:
+def get_graph(graphs: dict[str, graph_loader.WeightedGraph],
+              genre: str, dataset: pandas.DataFrame) -> graph_loader.WeightedGraph:
     """
     Return a WeightedGraph corresponding to the given genre - create this graph by calling graph_loader.load_graph
     if it has not been created so far; otherwise, return the one that has already been created and stored.
@@ -19,7 +20,7 @@ def get_graph(graphs: dict[str, graph_loader.WeightedGraph], genre: str) -> grap
     if genre in graphs.keys():
         return graphs[genre]
     else:
-        return graph_loader.load_graph(data, genre)
+        return graph_loader.load_graph(dataset, genre)
 
 
 if __name__ == '__main__':
@@ -46,7 +47,7 @@ if __name__ == '__main__':
 
         if input_song != 0.0 and input_genre != '':  # check if the input song actually exists in the database
             # call helper above to get graph to be used (based on genre)
-            graphs_used_so_far[input_genre] = get_graph(graphs_used_so_far, input_genre)
+            graphs_used_so_far[input_genre] = get_graph(graphs_used_so_far, input_genre, data)
             # store list of recommendations by ID
             recs_ids = graphs_used_so_far[input_genre].get_song_recommendations(input_song)
             # list of recommendations, track and artist names
