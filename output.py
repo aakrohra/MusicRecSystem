@@ -72,7 +72,7 @@ if __name__ == '__main__':
 
     if input_song != 0.0:  # check if the input song actually exists in the database
         # list of recommendations, with IDs
-        recs_ids = graph_loader.load_graph('music_rock.csv', input_genre).get_song_recommendations(input_song)  # TODO: CHANGE TO FULL CSV LATER
+        recs_ids = graph_loader.load_graph('music_genre.csv', input_genre).get_song_recommendations(input_song)  # TODO: CHANGE TO FULL CSV LATER
         # list of recommendations, track and artist names
         recs_names = [s[1]['track_name'] + ' - ' + s[1]['artist_name'] for s in data.iterrows()
                       if float(s[1]['instance_id']) in recs_ids][:15]
