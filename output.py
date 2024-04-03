@@ -50,6 +50,7 @@ if __name__ == '__main__':
     data = pandas.read_csv('music_genre.csv', usecols=['instance_id', 'artist_name', 'track_name'])
 
     input_song = 0.0
+    input_genre = ''
     track = ''
     artist = ''
     valid = False
@@ -67,10 +68,11 @@ if __name__ == '__main__':
     for s in data.iterrows():  # to find instance ID based on input
         if s[1]['artist_name'] == artist and s[1]['track_name'] == track:
             input_song = float(s[1]['instance_id'])
+            input_genre = s[1]['music_genre']
 
     if input_song != 0.0:  # check if the input song actually exists in the database
         # list of recommendations, with IDs
-        recs_ids = graph_loader.load_graph('music_rock.csv').get_song_recommendations(input_song)  # TODO: CHANGE TO FULL CSV LATER
+        recs_ids = graph_loader.load_graph('music_rock.csv', input_genre).get_song_recommendations(input_song)  # TODO: CHANGE TO FULL CSV LATER
         # list of recommendations, track and artist names
         recs_names = [s[1]['track_name'] + ' - ' + s[1]['artist_name'] for s in data.iterrows()
                       if float(s[1]['instance_id']) in recs_ids][:15]
