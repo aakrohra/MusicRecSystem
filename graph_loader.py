@@ -4,21 +4,20 @@ import pandas
 from typing import Any, Union
 
 
-class _Vertex:
-    """A vertex in a book review graph, used to represent a user or a book.
+class _Vertex:              #TODO: Maybe add a preconddition that you self.kind must be some set of genres
+    """A vertex in a song similarity graph.
 
-    Each vertex item is either a user id or book title. Both are represented as strings,
-    even though we've kept the type annotation as Any to be consistent with lecture.
+    Each vertex item is the instance id of a song, which is represented as a float.
 
     Instance Attributes:
-        - item: The data stored in this vertex, representing a user or book.
-        - kind: The type of this vertex: 'user' or 'book'.
+        - item: The data stored in this vertex, representing the instance id of a song.
+        - kind: The genre of this vertex.
         - neighbours: The vertices that are adjacent to this vertex.
 
     Representation Invariants:
         - self not in self.neighbours
         - all(self in u.neighbours for u in self.neighbours)
-        - self.kind in {'user', 'book'}
+        - all(self.kind == u.kind for u in self.neighbours)
     """
     item: Any
     kind: str
@@ -28,9 +27,6 @@ class _Vertex:
         """Initialize a new vertex with the given item and kind.
 
         This vertex is initialized with no neighbours.
-
-        Preconditions:
-            - kind in {'user', 'book'}
         """
         self.item = item
         self.kind = kind
@@ -42,7 +38,7 @@ class _Vertex:
 
 
 class Graph:
-    """A graph used to represent a book review network.
+    """A graph used to represent a song similarity network.
     """
     # Private Instance Attributes:
     #     - _vertices:
@@ -59,9 +55,6 @@ class Graph:
 
         The new vertex is not adjacent to any other vertices.
         Do nothing if the given item is already in this graph.
-
-        Preconditions:
-            - kind in {'user', 'book'}
         """
         if item not in self._vertices:
             self._vertices[item] = _Vertex(item, kind)
@@ -107,37 +100,30 @@ class Graph:
         else:
             raise ValueError
 
-    def get_all_vertices(self, kind: str = '') -> set:
+    def get_all_vertices(self) -> set:
         """Return a set of all vertex items in this graph.
-
-        If kind != '', only return the items of the given vertex kind.
-
-        Preconditions:
-            - kind in {'', 'user', 'book'}
         """
-        if kind != '':
-            return {v.item for v in self._vertices.values() if v.kind == kind}
-        else:
-            return set(self._vertices.keys())
+        return set(self._vertices.keys())
 
 
 class _WeightedVertex(_Vertex):
-    """A vertex in a weighted book review graph, used to represent a user or a book.
+    """A vertex in a weighted song similarity graph.
 
-    Same documentation as _Vertex from Exercise 3, except now neighbours is a dictionary mapping
-    a neighbour vertex to the weight of the edge to from self to that neighbour.
-    Note that for this exercise, the weights will be integers between 1 and 5.
+    Each vertex item is the instance id of a song, which is represented as a float.
+    The weights are a "similarity score" between the two songs, which is calculated by
+    finding the song's absolute difference between their ratings in each category, and
+    summing them.
 
     Instance Attributes:
-        - item: The data stored in this vertex, representing a user or book.
-        - kind: The type of this vertex: 'user' or 'book'.
+        - item: The data stored in this vertex, representing the instance id of a song.
+        - kind: The genre of this vertex.
         - neighbours: The vertices that are adjacent to this vertex, and their corresponding
             edge weights.
 
     Representation Invariants:
         - self not in self.neighbours
         - all(self in u.neighbours for u in self.neighbours)
-        - self.kind in {'user', 'book'}
+        - all(self.kind == u.kind for u in self.neighbours)
     """
     item: Any
     kind: str
@@ -147,19 +133,14 @@ class _WeightedVertex(_Vertex):
         """Initialize a new vertex with the given item and kind.
 
         This vertex is initialized with no neighbours.
-
-        Preconditions:
-            - kind in {'user', 'book'}
         """
         super().__init__(item, kind)
         self.neighbours = {}
 
 
 class WeightedGraph(Graph):
-    """A weighted graph used to represent a book review network that keeps track of review scores.
-
-    Note that this is a subclass of the Graph class from Exercise 3, and so inherits any methods
-    from that class that aren't overridden here.
+    """A weighted graph used to represent a song similarity network that keeps
+    track of the similarity between each song.
     """
     # Private Instance Attributes:
     #     - _vertices:
@@ -179,9 +160,6 @@ class WeightedGraph(Graph):
 
         The new vertex is not adjacent to any other vertices.
         Do nothing if the given item is already in this graph.
-
-        Preconditions:
-            - kind in {'user', 'book'}
         """
         if item not in self._vertices:
             self._vertices[item] = _WeightedVertex(item, kind)
@@ -246,7 +224,8 @@ class WeightedGraph(Graph):
     def _ascending_sort_dictionary(self, d: dict) -> list:
         """
         Helper function for get_song_recommendations()
-        #TODO: PROPER DOCSTRING LATER
+
+        Returns a list containing the keys of d and sorted in ascending order by the values of d.
         """
         d_new = dict(d)
         sorted_lst = []
@@ -265,19 +244,20 @@ class WeightedGraph(Graph):
 
 
 def load_graph(file: str, genre: str) -> WeightedGraph:
+    """Return a weighted song similarity graph corresponding to the given
+    dataset containing only one genre of song.
+
+    Preconditions:
+        - file is the path to a CSV file corresponding to the song ratings data.
     """
-    later
-    """
-    raw_data = pandas.read_csv(file)
+    raw_data = pandas.read_csv(file)         # data wrangling to get only the necessary information
     raw_data.drop(raw_data.columns[[3, 6, 9, 11, 12, 13, 14, 15]], axis=1, inplace=True)
     raw_data.dropna(inplace=True)
     data = raw_data[(raw_data.music_genre == genre)]
     graph = WeightedGraph()
 
-    for s in data.iterrows():
+    for s in data.iterrows():        # adds all the songs in data
         graph.add_vertex(s[1]['instance_id'], s[1]['music_genre'])
-
-    # do we generate the edges after asking if the user wants all genres/only the same genre as the chosen song?
 
     for s in data.iterrows():  # select a song
         data['difference'] = abs(data['acousticness'] - s[1]['acousticness'])  # create a difference column
