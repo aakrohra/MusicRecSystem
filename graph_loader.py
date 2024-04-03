@@ -1,7 +1,8 @@
 """*Insert description here*"""
 from __future__ import annotations
-import pandas
 from typing import Any, Union
+import pandas
+import python_ta
 
 
 class _Vertex:              #TODO: Maybe add a preconddition that you self.kind must be some set of genres
@@ -253,7 +254,7 @@ def load_graph(file: str, genre: str) -> WeightedGraph:
     raw_data = pandas.read_csv(file)         # data wrangling to get only the necessary information
     raw_data.drop(raw_data.columns[[3, 6, 9, 11, 12, 13, 14, 15]], axis=1, inplace=True)
     raw_data.dropna(inplace=True)
-    data = raw_data[(raw_data.music_genre == genre)]
+    data = raw_data[(raw_data.music_genre == genre)].copy()
     graph = WeightedGraph()
 
     for s in data.iterrows():        # adds all the songs in data
@@ -275,4 +276,8 @@ def load_graph(file: str, genre: str) -> WeightedGraph:
 
 
 if __name__ == '__main__':
-    pass
+    python_ta.check_all(config={
+        'extra-imports': ['pandas'],  # the names (strs) of imported modules
+        'allowed-io': [],  # the names (strs) of functions that call print/open/input
+        'max-line-length': 120
+    })
