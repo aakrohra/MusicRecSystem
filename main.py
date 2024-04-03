@@ -24,7 +24,7 @@ if __name__ == '__main__':
         print('What song would you like to generate recommendations for?')
         track = input('Please enter the track name: ').lower()
         artist = input('Please enter the artist name: ').lower()
-        print("Loading...")
+        print("Loading... Please allow up to ~1 minute.")
 
         for s in data.iterrows():  # to find instance ID based on input
             if str(s[1]['artist_name']).lower() == artist and str(s[1]['track_name']).lower() == track:
