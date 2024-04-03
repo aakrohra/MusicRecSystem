@@ -16,7 +16,8 @@ def create_pdf(given: str, recs: list[str]) -> None:
     Create a PDF displaying the songs in recs as the most similar songs to the given track,
     using the ReportLab library. This PDF is located in the same file as pdf_loader.py.
     """
-    c = canvas.Canvas('song_recommendations.pdf', pagesize=letter)  # set up PDF
+    # set up PDF with name according to given song
+    c = canvas.Canvas(f'song_recommendations_{given.replace(" ", "_")}.pdf', pagesize=letter)
     c.setFont("Times-Roman", 15, 18)  # set default font size
     curr_x = 1 * inch
     curr_y = 10 * inch
