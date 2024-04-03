@@ -21,7 +21,7 @@ def create_pdf(given: str, recs: list[str]) -> None:
     curr_x = 1 * inch
     curr_y = 10 * inch
 
-    c.drawString(curr_x, curr_y, f'Song Recommendations Similar to {given}')
+    c.drawString(curr_x, curr_y, f'Song Recommendations Similar to {given.title()}')
     curr_y -= 18
     c.setFont("Times-Roman", 12, 18)  # adjust font size
 

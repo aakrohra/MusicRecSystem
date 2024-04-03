@@ -1,0 +1,10 @@
+# CSC111 Project 2 - Libraries required for running the project.
+
+# Testing and code checking
+python-ta~=2.7.0
+
+# Data visualization
+reportlab==4.1.0
+
+# Data processing
+pandas==2.2.1

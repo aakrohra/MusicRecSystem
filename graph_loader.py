@@ -9,32 +9,28 @@ from typing import Any, Union
 import pandas
 
 
-class _Vertex:              #TODO: Maybe add a preconddition that you self.kind must be some set of genres
+class _Vertex:  # TODO: Maybe add a preconddition that you self.kind must be some set of genres
     """A vertex in a song similarity graph.
 
     Each vertex item is the instance id of a song, which is represented as a float.
 
     Instance Attributes:
         - item: The data stored in this vertex, representing the instance id of a song.
-        - kind: The genre of this vertex.
         - neighbours: The vertices that are adjacent to this vertex.
 
     Representation Invariants:
         - self not in self.neighbours
         - all(self in u.neighbours for u in self.neighbours)
-        - all(self.kind == u.kind for u in self.neighbours)
     """
     item: Any
-    kind: str
     neighbours: set[_Vertex]
 
-    def __init__(self, item: Any, kind: str) -> None:
-        """Initialize a new vertex with the given item and kind.
+    def __init__(self, item: Any) -> None:
+        """Initialize a new vertex with the given item.
 
         This vertex is initialized with no neighbours.
         """
         self.item = item
-        self.kind = kind
         self.neighbours = set()
 
     def degree(self) -> int:
@@ -55,14 +51,14 @@ class Graph:
         """Initialize an empty graph (no vertices or edges)."""
         self._vertices = {}
 
-    def add_vertex(self, item: Any, kind: str) -> None:
-        """Add a vertex with the given item and kind to this graph.
+    def add_vertex(self, item: Any) -> None:
+        """Add a vertex with the given item to this graph.
 
         The new vertex is not adjacent to any other vertices.
         Do nothing if the given item is already in this graph.
         """
         if item not in self._vertices:
-            self._vertices[item] = _Vertex(item, kind)
+            self._vertices[item] = _Vertex(item)
 
     def add_edge(self, item1: Any, item2: Any) -> None:
         """Add an edge between the two vertices with the given items in this graph.
@@ -121,25 +117,22 @@ class _WeightedVertex(_Vertex):
 
     Instance Attributes:
         - item: The data stored in this vertex, representing the instance id of a song.
-        - kind: The genre of this vertex.
         - neighbours: The vertices that are adjacent to this vertex, and their corresponding
             edge weights.
 
     Representation Invariants:
         - self not in self.neighbours
         - all(self in u.neighbours for u in self.neighbours)
-        - all(self.kind == u.kind for u in self.neighbours)
     """
     item: Any
-    kind: str
     neighbours: dict[_WeightedVertex, Union[int, float]]
 
-    def __init__(self, item: Any, kind: str) -> None:
-        """Initialize a new vertex with the given item and kind.
+    def __init__(self, item: Any) -> None:
+        """Initialize a new vertex with the given item.
 
         This vertex is initialized with no neighbours.
         """
-        super().__init__(item, kind)
+        super().__init__(item)
         self.neighbours = {}
 
 
@@ -160,14 +153,14 @@ class WeightedGraph(Graph):
         # This call isn't necessary, except to satisfy PythonTA.
         Graph.__init__(self)
 
-    def add_vertex(self, item: Any, kind: str) -> None:
-        """Add a vertex with the given item and kind to this graph.
+    def add_vertex(self, item: Any) -> None:
+        """Add a vertex with the given item to this graph.
 
         The new vertex is not adjacent to any other vertices.
         Do nothing if the given item is already in this graph.
         """
         if item not in self._vertices:
-            self._vertices[item] = _WeightedVertex(item, kind)
+            self._vertices[item] = _WeightedVertex(item)
 
     def add_edge(self, item1: Any, item2: Any, weight: float = 0.0) -> None:
         """Add an edge between the two vertices with the given items in this graph,
@@ -262,7 +255,7 @@ def load_graph(file: str, genre: str) -> WeightedGraph:
     graph = WeightedGraph()
 
     for s in data.iterrows():        # adds all the songs in data
-        graph.add_vertex(s[1]['instance_id'], s[1]['music_genre'])
+        graph.add_vertex(s[1]['instance_id'])
 
     for s in data.iterrows():  # select a song
         data['difference'] = abs(data['acousticness'] - s[1]['acousticness'])  # create a difference column
