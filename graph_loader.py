@@ -9,7 +9,7 @@ from typing import Any, Union
 import pandas
 
 
-class _Vertex:  # TODO: Maybe add a preconddition that you self.kind must be some set of genres
+class _Vertex: 
     """A vertex in a song similarity graph.
 
     Each vertex item is the instance id of a song, which is represented as a float.
